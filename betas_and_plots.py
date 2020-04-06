@@ -64,13 +64,15 @@ class SectorBetasAndPlots:
       return df.to_csv(f'{title}')
 
     def plot_sector_betas_over_time(betas_df):
-      fig, axs = plt.subplots(6, 2, figsize=(15, 35))
+      fig, axs = plt.subplots(6, 2, sharey=True, figsize=(15, 35))
       fig.tight_layout()
       plt.subplots_adjust(hspace=.6)
       plt.xticks(fontsize=12)
       for sym, ax in zip(SECTOR_ETF_SYMBOLS.keys(), axs.flatten()):
-        betas[f'{sym.lower()}_beta'].plot(ax=ax, title=SECTOR_ETF_SYMBOLS[sym])
+        betas_df[f'{sym.lower()}_beta'].plot(
+            ax=ax, title=SECTOR_ETF_SYMBOLS[sym])
       plt.savefig('beta_for_each_sector_since_2019.png')
+      fig.delaxes(axs[-1, -1])
 
 #add_symbol_data_to_dataframe(spy_data, SECTOR_ETF_SYMBOLS.keys())
 #calculate_beta_for_specific_time_range(spy_data, SECTOR_ETF_SYMBOLS.keys())
