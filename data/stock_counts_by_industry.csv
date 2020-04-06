@@ -1,0 +1,129 @@
+sector,industry,symbol,security
+Communication Services,Advertising,2,2
+Communication Services,Alternative Carriers,1,1
+Communication Services,Broadcasting,2,2
+Communication Services,Cable & Satellite,3,3
+Communication Services,Integrated Telecommunication Services,2,2
+Communication Services,Interactive Home Entertainment,3,3
+Communication Services,Interactive Media & Services,4,4
+Communication Services,Movies & Entertainment,6,6
+Communication Services,Publishing,2,2
+Communication Services,Wireless Telecommunication Services,1,1
+Consumer Discretionary,Apparel Retail,4,4
+Consumer Discretionary,"Apparel, Accessories & Luxury Goods",10,10
+Consumer Discretionary,Auto Parts & Equipment,2,2
+Consumer Discretionary,Automobile Manufacturers,2,2
+Consumer Discretionary,Automotive Retail,1,1
+Consumer Discretionary,Casinos & Gaming,3,3
+Consumer Discretionary,Computer & Electronics Retail,1,1
+Consumer Discretionary,Consumer Electronics,1,1
+Consumer Discretionary,Department Stores,2,2
+Consumer Discretionary,Distributors,1,1
+Consumer Discretionary,General Merchandise Stores,4,4
+Consumer Discretionary,Home Furnishings,2,2
+Consumer Discretionary,Home Improvement Retail,2,2
+Consumer Discretionary,Homebuilding,4,4
+Consumer Discretionary,"Hotels, Resorts & Cruise Lines",5,5
+Consumer Discretionary,Household Appliances,1,1
+Consumer Discretionary,Housewares & Specialties,1,1
+Consumer Discretionary,Internet & Direct Marketing Retail,4,4
+Consumer Discretionary,Leisure Products,1,1
+Consumer Discretionary,Motorcycle Manufacturers,1,1
+Consumer Discretionary,Restaurants,5,5
+Consumer Discretionary,Specialized Consumer Services,1,1
+Consumer Discretionary,Specialty Stores,6,6
+Consumer Staples,Agricultural Products,1,1
+Consumer Staples,Brewers,1,1
+Consumer Staples,Distillers & Vintners,2,2
+Consumer Staples,Drug Retail,1,1
+Consumer Staples,Food Distributors,1,1
+Consumer Staples,Food Retail,1,1
+Consumer Staples,Household Products,4,4
+Consumer Staples,Hypermarkets & Super Centers,2,2
+Consumer Staples,Packaged Foods & Meats,12,12
+Consumer Staples,Personal Products,3,3
+Consumer Staples,Soft Drinks,3,3
+Consumer Staples,Tobacco,2,2
+Energy,Integrated Oil & Gas,3,3
+Energy,Oil & Gas Drilling,1,1
+Energy,Oil & Gas Equipment & Services,5,5
+Energy,Oil & Gas Exploration & Production,11,11
+Energy,Oil & Gas Refining & Marketing,4,4
+Energy,Oil & Gas Storage & Transportation,3,3
+Financials,Asset Management & Custody Banks,8,8
+Financials,Consumer Finance,4,4
+Financials,Diversified Banks,6,6
+Financials,Financial Exchanges & Data,8,8
+Financials,Insurance Brokers,4,4
+Financials,Investment Banking & Brokerage,5,5
+Financials,Life & Health Insurance,6,6
+Financials,Multi-Sector Holdings,1,1
+Financials,Multi-line Insurance,3,3
+Financials,Property & Casualty Insurance,8,8
+Financials,Regional Banks,11,11
+Financials,Reinsurance,1,1
+Financials,Thrifts & Mortgage Finance,1,1
+Health Care,Biotechnology,7,7
+Health Care,Health Care Distributors,6,6
+Health Care,Health Care Equipment,19,19
+Health Care,Health Care Facilities,3,3
+Health Care,Health Care Services,3,3
+Health Care,Health Care Supplies,3,3
+Health Care,Health Care Technology,1,1
+Health Care,Life Sciences Tools & Services,4,4
+Health Care,Managed Health Care,5,5
+Health Care,Pharmaceuticals,9,9
+Industrials,Aerospace & Defense,11,11
+Industrials,Agricultural & Farm Machinery,1,1
+Industrials,Air Freight & Logistics,4,4
+Industrials,Airlines,5,5
+Industrials,Building Products,7,7
+Industrials,Construction & Engineering,2,2
+Industrials,Construction Machinery & Heavy Trucks,3,3
+Industrials,Diversified Support Services,2,2
+Industrials,Electrical Components & Equipment,4,4
+Industrials,Environmental & Facilities Services,3,3
+Industrials,Human Resource & Employment Services,1,1
+Industrials,Industrial Conglomerates,4,4
+Industrials,Industrial Machinery,13,13
+Industrials,Railroads,4,4
+Industrials,Research & Consulting Services,4,4
+Industrials,Trading Companies & Distributors,1,1
+Industrials,Trucking,2,2
+Information Technology,Application Software,11,11
+Information Technology,Communications Equipment,5,5
+Information Technology,Data Processing & Outsourced Services,12,12
+Information Technology,Electronic Components,2,2
+Information Technology,Electronic Equipment & Instruments,3,3
+Information Technology,Electronic Manufacturing Services,2,2
+Information Technology,IT Consulting & Other Services,6,6
+Information Technology,Internet Services & Infrastructure,3,3
+Information Technology,Semiconductor Equipment,3,3
+Information Technology,Semiconductors,13,13
+Information Technology,Systems Software,3,3
+Information Technology,Technology Distributors,1,1
+Information Technology,"Technology Hardware, Storage & Peripherals",7,7
+Materials,Commodity Chemicals,1,1
+Materials,Construction Materials,2,2
+Materials,Copper,1,1
+Materials,Diversified Chemicals,1,1
+Materials,Fertilizers & Agricultural Chemicals,4,4
+Materials,Gold,1,1
+Materials,Industrial Gases,2,2
+Materials,Metal & Glass Containers,1,1
+Materials,Paper Packaging,6,6
+Materials,Specialty Chemicals,8,8
+Materials,Steel,1,1
+Real Estate,Health Care REITs,3,3
+Real Estate,Hotel & Resort REITs,1,1
+Real Estate,Industrial REITs,2,2
+Real Estate,Office REITs,4,4
+Real Estate,Real Estate Services,1,1
+Real Estate,Residential REITs,6,6
+Real Estate,Retail REITs,5,5
+Real Estate,Specialized REITs,9,9
+Utilities,Electric Utilities,13,13
+Utilities,Gas Utilities,1,1
+Utilities,Independent Power Producers & Energy Traders,2,2
+Utilities,Multi-Utilities,11,11
+Utilities,Water Utilities,1,1
