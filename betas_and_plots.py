@@ -36,6 +36,8 @@ class SectorBetasAndPlots:
                     'xlv_close': 'Health Care',
                     'xly_close': 'Consumer Discretionary'}
 
+    HISTORICAL_STARTS = ['2020-02-06', '2019-12-06', '2019-03-06', '2015-03-06']
+
     def __init__(self)
       self.stocks = pd.read_csv('data/stock-list.csv')
       self.sectors = np.unique(self.stocks['sector'])
@@ -56,7 +58,7 @@ class SectorBetasAndPlots:
       plt.savefig('total_stocks_per_sector.png')
 
     # Initial dataframe using data for S&P 500 Index ETF (SPY)
-    def create_initial_spy_dataframe(start_date="2007-01-01", end_date=self.date_today):
+    def create_initial_spy_dataframe(start_date="2007-01-01", end_date=datetime.date.today().isoformat()):
       spy_data = yf.download("SPY", start=start_date, end=end_date)
       spy_data = spy_data[['Adj Close']]
       spy_data.rename(columns={'Adj Close': 'spy_close'}, inplace=True)
@@ -81,17 +83,26 @@ class SectorBetasAndPlots:
     def create_csv_for_data_frame(df, title):
       return df.to_csv(f'{title}')
 
+    # TODO: add title
     def plot_sector_betas_over_time(betas_df, title):
       fig, axs = plt.subplots(6, 2, sharey=True, figsize=(15, 35))
       fig.tight_layout()
       plt.subplots_adjust(hspace=.6)
       plt.xticks(fontsize=12)
+      new_df = betas_df.set_index('Date')
       for sym, ax in zip(SECTOR_ETF_SYMBOLS.keys(), axs.flatten()):
-        betas_df[f'{sym.lower()}_beta'].plot(
+        new_df[f'{sym.lower()}_beta'].plot(
             ax=ax, title=SECTOR_ETF_SYMBOLS[sym])
         ax.axhline(y=1, color='r')
       plt.savefig(title)
       fig.delaxes(axs[-1, -1])
+
+    def plot_average_betas(df, title):
+      fig, ax = plt.subplots(figsize=(12, 8))
+      ax.set_title(title, fontsize=18)
+      ax.set_ylabel('beta', fontsize=14)
+      ax.set_xlabel('sector', fontsize=14)
+      df[['sector', 'recent_average_beta', 'historical_average_beta']].plot(kind='bar', x='sector', ax=ax)
 
     def get_data_for_a_period(df, start_date, end_date):
       new_df = df.reset_index()
@@ -99,17 +110,23 @@ class SectorBetasAndPlots:
       mask = (new_df['Date'] > start_date) & (new_df['Date'] <= end_date)
       return new_df.loc[mask]
 
-    # TODO: ADD MEAN FOR historical and recent data
     def t_test_for_symbol_betas(betas_df, historical_start):
-      results = {}
+      data = {'symbol': [], 'sector': [], 'p_value': [], 'significant?': [], 'recent_average_beta': [], 'historical_average_beta': [], 'difference': []}
       for sym in symbols:
         if sym == 'XLC' and historical_start < '2018-08-06':
           historical_start = '2018-08-06'
         col = f'{sym.lower()}_beta'
         historical = get_data_for_a_period(betas_df, historical_start, '2020-03-06')[col].values
-        recent = get_data_for_a_period(betas_df, '2020-03-06', datetime.date.today().isoformat())[col].values
-        results[sym] = scs.ttest_ind(historical, recent, equal_var=False)[1]
-      return {k: v for k, v in sorted(results.items(), key=lambda item: item[1], reverse=True)}
+        recent = get_data_for_a_period(betas_df, '2020-03-06', '2020-04-08')[col].values
+        p_value = scs.ttest_ind(historical, recent, equal_var=False)[1]
+        data['symbol'].append(sym)
+        data['sector'].append(SECTOR_ETF_SYMBOLS[sym])
+        data['p_value'].append(p_value)
+        data['significant?'].append(p_value < .01)
+        data['recent_average_beta'].append(recent.mean())
+        data['historical_average_beta'].append(historical.mean())
+        data['difference'].append(recent.mean() - historical.mean())
+      return pd.DataFrame(data)
 
     def correlation_between_stocks_and_index(df, symbols):
       results = []
@@ -117,7 +134,7 @@ class SectorBetasAndPlots:
         col = f'{sym.lower()}_close'
         historical = get_data_for_a_period(df, '2018-08-06', '2020-03-06')
         historical_corr = historical['spy_close'].corr(historical[col])
-        recent = get_data_for_a_period(df, '2020-02-21', datetime.date.today().isoformat())
+        recent = get_data_for_a_period(df, '2020-02-21', '2020-04-08')
         recent_corr = recent['spy_close'].corr(recent[col])
         results.append([sym, historical_corr, recent_corr])
       return results
