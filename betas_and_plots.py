@@ -173,10 +173,18 @@ class SectorBetasAndPlots:
       plt.tight_layout()
       plt.savefig(title)
 
-    def plot_correlation_matrix(df):
-      fig, ax = plt.subplots(figsize=(12, 12))
+   def plot_correlation_matrix(df, title):
+      fig, ax = plt.subplots(figsize=(10, 8))
       df[IMPT_COLUMNS.keys()]
       corrMatrix = df.corr()
-      sns.heatmap(corrMatrix, annot=True, ax=ax, vmin=-1, vmax=1,
-                  xticklabels=IMPT_COLUMNS.values(), yticklabels=IMPT_COLUMNS.values())
+      sns.heatmap(corrMatrix, annot=True, ax=ax, vmin=-1, vmax=1, linewidths=1,
+                       xticklabels=IMPT_COLUMNS.values(), yticklabels=IMPT_COLUMNS.values())
+      b, t = plt.ylim()
+      b += 0.5
+      t -= 0.5
+      plt.ylim(b, t)
+      ax.set_title(title, fontsize=16)
+      plt.tight_layout()
+      plt.savefig(title)
       plt.show()
+
