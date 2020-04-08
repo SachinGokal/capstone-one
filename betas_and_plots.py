@@ -48,9 +48,11 @@ class SectorBetasAndPlots:
     # General bar plot for seeing total number of securities that make up each sector
     def plot_for_stock_counts_by_sector():
       fig, ax = plt.subplots(figsize=(10, 7))
+
       stock_counts_by_sector = self.stocks.groupby(['sector']).count().reset_index()
       stock_counts_by_sector.rename(columns={'symbol': 'symbol_count'}, inplace=True)
       stock_counts_by_sector.plot(ax=ax, kind='bar', x='sector', y='symbol_count')
+
       plt.title("Total Stocks in each Sector", fontsize=18)
       plt.ylabel("Total", fontsize=14)
       plt.xlabel("Sector", fontsize=14)
@@ -89,6 +91,7 @@ class SectorBetasAndPlots:
       plt.subplots_adjust(hspace=.6)
       plt.xticks(fontsize=12)
       new_df = betas_df.set_index('Date')
+
       for sym, ax in zip(SECTOR_ETF_SYMBOLS.keys(), axs.flatten()):
         new_df[f'{sym.lower()}_beta'].plot(
             ax=ax)
@@ -96,6 +99,7 @@ class SectorBetasAndPlots:
         ax.set_ylabel('beta', fontsize=14)
         ax.set_xlabel('date', fontsize=14)
         ax.set_title(SECTOR_ETF_SYMBOLS[sym], fontsize=14)
+
       fig.delaxes(axs[-1, -1])
       plt.savefig(title, bbox_inches="tight")
 
@@ -104,7 +108,9 @@ class SectorBetasAndPlots:
       ax.set_title(title, fontsize=18)
       ax.set_ylabel('beta', fontsize=14)
       ax.set_xlabel('sector', fontsize=14)
+
       df[['sector', 'recent_average_beta', 'historical_average_beta']].plot(kind='bar', x='sector', ax=ax)
+
       plt.tight_layout()
       plt.savefig(title)
 
@@ -119,10 +125,12 @@ class SectorBetasAndPlots:
       for sym in symbols:
         if sym == 'XLC' and historical_start < '2018-08-06':
           historical_start = '2018-08-06'
+
         col = f'{sym.lower()}_beta'
         historical = get_data_for_a_period(betas_df, historical_start, '2020-03-06')[col].values
         recent = get_data_for_a_period(betas_df, '2020-03-06', '2020-04-08')[col].values
         p_value = scs.ttest_ind(historical, recent, equal_var=False)[1]
+
         data['symbol'].append(sym)
         data['sector'].append(SECTOR_ETF_SYMBOLS[sym])
         data['p_value'].append(p_value)
@@ -132,16 +140,38 @@ class SectorBetasAndPlots:
         data['difference'].append(recent.mean() - historical.mean())
       return pd.DataFrame(data)
 
-    def correlation_between_stocks_and_index(df, symbols):
-      results = []
+    def correlation_between_stocks_and_index(df):
+      data = {'symbol': [], 'sector': [], 'recent_corr': [], 'one_month_corr': [], 'three_month_corr': [], 'one_year_corr': [], 'five_year_corr': []}
       for sym in symbols:
+        data['symbol'].append(sym)
+        data['sector'].append(SECTOR_ETF_SYMBOLS[sym])
         col = f'{sym.lower()}_close'
-        historical = get_data_for_a_period(df, '2018-08-06', '2020-03-06')
-        historical_corr = historical['spy_close'].corr(historical[col])
+
         recent = get_data_for_a_period(df, '2020-02-21', '2020-04-08')
-        recent_corr = recent['spy_close'].corr(recent[col])
-        results.append([sym, historical_corr, recent_corr])
-      return results
+        one_month = get_data_for_a_period(df, '2020-01-21', '2020-02-21')
+        three_month = get_data_for_a_period(df, '2019-10-21', '2020-01-21')
+        one_year = get_data_for_a_period(df, '2019-02-21', '2020-02-21')
+        five_year = get_data_for_a_period(df, '2015-02-21', '2020-02-21')
+
+        data['recent_corr'].append(recent['spy_close'].corr(recent[col]))
+        data['one_month_corr'].append(one_month['spy_close'].corr(one_month[col]))
+        data['three_month_corr'].append(three_month['spy_close'].corr(three_month[col]))
+        data['one_year_corr'].append(one_year['spy_close'].corr(one_year[col]))
+        data['five_year_corr'].append(five_year['spy_close'].corr(five_year[col]))
+
+      return pd.DataFrame(data)
+
+    def plot_correlation(df, title):
+      fig, ax = plt.subplots(figsize=(12, 8))
+      ax.set_title(title, fontsize=18)
+      ax.set_ylabel('correlation', fontsize=16)
+      ax.set_xlabel('sector', fontsize=16)
+      plt.xticks(fontsize=12)
+      df[['sector', 'recent_corr', 'one_month_corr', 'three_month_corr', 'one_year_corr', 'five_year_corr']].plot(
+          kind='box', x='sector', ax=ax)
+
+      plt.tight_layout()
+      plt.savefig(title)
 
     def plot_correlation_matrix(df):
       fig, ax = plt.subplots(figsize=(12, 12))
