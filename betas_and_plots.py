@@ -83,19 +83,21 @@ class SectorBetasAndPlots:
     def create_csv_for_data_frame(df, title):
       return df.to_csv(f'{title}')
 
-    # TODO: add title
     def plot_sector_betas_over_time(betas_df, title):
       fig, axs = plt.subplots(6, 2, sharey=True, figsize=(15, 35))
-      fig.tight_layout()
+      plt.tight_layout()
       plt.subplots_adjust(hspace=.6)
       plt.xticks(fontsize=12)
       new_df = betas_df.set_index('Date')
       for sym, ax in zip(SECTOR_ETF_SYMBOLS.keys(), axs.flatten()):
         new_df[f'{sym.lower()}_beta'].plot(
-            ax=ax, title=SECTOR_ETF_SYMBOLS[sym])
+            ax=ax)
         ax.axhline(y=1, color='r')
-      plt.savefig(title)
+        ax.set_ylabel('beta', fontsize=14)
+        ax.set_xlabel('date', fontsize=14)
+        ax.set_title(SECTOR_ETF_SYMBOLS[sym], fontsize=14)
       fig.delaxes(axs[-1, -1])
+      plt.savefig(title, bbox_inches="tight")
 
     def plot_average_betas(df, title):
       fig, ax = plt.subplots(figsize=(12, 8))
@@ -103,6 +105,8 @@ class SectorBetasAndPlots:
       ax.set_ylabel('beta', fontsize=14)
       ax.set_xlabel('sector', fontsize=14)
       df[['sector', 'recent_average_beta', 'historical_average_beta']].plot(kind='bar', x='sector', ax=ax)
+      plt.tight_layout()
+      plt.savefig(title)
 
     def get_data_for_a_period(df, start_date, end_date):
       new_df = df.reset_index()
