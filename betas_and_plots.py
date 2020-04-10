@@ -139,24 +139,27 @@ class SectorBetasAndPlots:
       return new_df.loc[mask]
 
     def t_test_for_symbol_betas(betas_df, historical_start):
-      data = {'symbol': [], 'sector': [], 'p_value': [], 'significant?': [], 'recent_average_beta': [], 'historical_average_beta': [], 'difference': []}
+      data = {'symbol': [], 'sector': [], 't_stat': [], 'p_value': [], 'significant?': [
+      ], 'recent_average_beta': [], 'historical_average_beta': [], 'difference': []}
       for sym in symbols:
         if sym == 'XLC' and historical_start < '2018-08-06':
           historical_start = '2018-08-06'
-
         col = f'{sym.lower()}_beta'
-        historical = get_data_for_a_period(betas_df, historical_start, '2020-03-06')[col].values
-        recent = get_data_for_a_period(betas_df, '2020-03-06', '2020-04-08')[col].values
-        p_value = scs.ttest_ind(historical, recent, equal_var=False)[1]
-
+        historical = get_data_for_a_period(
+            betas_df, historical_start, '2020-03-06')[col].values
+        recent = get_data_for_a_period(
+            betas_df, '2020-03-06', '2020-04-08')[col].values
+        t_stat = scs.ttest_ind(recent, historical, equal_var=False)[0]
+        p_value = scs.ttest_ind(recent, historical, equal_var=False)[1]
         data['symbol'].append(sym)
         data['sector'].append(SECTOR_ETF_SYMBOLS[sym])
+        data['t_stat'].append(t_stat)
         data['p_value'].append(p_value)
-        data['significant?'].append(p_value < .01)
+        data['significant?'].append(p_value < .025)
         data['recent_average_beta'].append(recent.mean())
         data['historical_average_beta'].append(historical.mean())
         data['difference'].append(recent.mean() - historical.mean())
-      return pd.DataFrame(data)
+      return pd.DataFrame(data
 
     def correlation_between_stocks_and_index(df):
       data = {'symbol': [], 'sector': [], 'recent_corr': [], 'one_month_corr': [], 'three_month_corr': [], 'one_year_corr': [], 'five_year_corr': []}
