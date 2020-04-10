@@ -1,13 +1,10 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import scipy.stats as scs
-import seaborn as sns
 import datetime
 import yfinance as yf
-import pickle
 
-class SectorBetasAndPlots:
+class BetasAndCorrelation:
 
     SECTOR_ETF_SYMBOLS = {
         'XLB': 'Materials',
@@ -45,20 +42,6 @@ class SectorBetasAndPlots:
       self.industries = np.unique(self.stocks['industry'])
       self.date_today = datetime.date.today().isoformat()
 
-    # General bar plot for seeing total number of securities that make up each sector
-    def plot_for_stock_counts_by_sector():
-      fig, ax = plt.subplots(figsize=(10, 7))
-
-      stock_counts_by_sector = self.stocks.groupby(['sector']).count().reset_index()
-      stock_counts_by_sector.rename(columns={'symbol': 'symbol_count'}, inplace=True)
-      stock_counts_by_sector.plot(ax=ax, kind='bar', x='sector', y='symbol_count')
-
-      plt.title("Total Stocks in each Sector", fontsize=18)
-      plt.ylabel("Total", fontsize=14)
-      plt.xlabel("Sector", fontsize=14)
-      plt.xticks(fontsize=12)
-      plt.savefig('total_stocks_per_sector.png')
-
     # Initial dataframe using data for S&P 500 Index ETF (SPY)
     def create_initial_spy_dataframe(start_date="2007-01-01", end_date=datetime.date.today().isoformat()):
       spy_data = yf.download("SPY", start=start_date, end=end_date)
@@ -73,7 +56,7 @@ class SectorBetasAndPlots:
       return init_df
 
     # create a plot for recent and two year range
-    def calculate_betas(init_df, window=20, absvalue=True):
+    def calculate_betas(init_df, window=20, absvalue=False):
       pct_changes = init_df.pct_change()
       for sym in symbols:
         if absvalue == True:
@@ -81,62 +64,6 @@ class SectorBetasAndPlots:
         else:
           pct_changes[f'{sym.lower()}_beta'] = pct_changes.rolling(window).cov().unstack()['spy_close'][f'{sym.lower()}_close'] / pct_changes['spy_close'].rolling(window).var()
       return pct_changes
-
-    def create_csv_for_data_frame(df, title):
-      return df.to_csv(f'{title}')
-
-    def plot_histogram_of_betas(df):
-      fig, ax = plt.subplots(figsize=(12, 10))
-      ax.set_title('Histogram of Betas for each sector', fontsize=18)
-      ax.set_ylabel('frequence', fontsize=14)
-      ax.set_xlabel('beta value', fontsize=14)
-      plt.tight_layout()
-      df.rename(columns=IMPT_BETA_COLUMNS)[
-          IMPT_BETA_COLUMNS.values()].hist(sharey=True, ax=ax)
-      plt.savefig('Distribution of Betas over 5 year period.png')
-
-    def plot_sector_betas_over_time(betas_df, title):
-      fig, axs = plt.subplots(6, 2, sharey=True, figsize=(15, 35))
-      plt.tight_layout()
-      plt.subplots_adjust(hspace=.6)
-      plt.xticks(fontsize=12)
-      new_df = betas_df.set_index('Date')
-
-      for sym, ax in zip(SECTOR_ETF_SYMBOLS.keys(), axs.flatten()):
-        new_df[f'{sym.lower()}_beta'].plot(
-            ax=ax)
-        ax.axhline(y=1, color='r')
-        ax.set_ylabel('beta', fontsize=14)
-        ax.set_xlabel('date', fontsize=14)
-        ax.set_title(SECTOR_ETF_SYMBOLS[sym], fontsize=14)
-
-      fig.delaxes(axs[-1, -1])
-      plt.savefig(title, bbox_inches="tight")
-
-    def plot_average_betas(df, title):
-      fig, ax = plt.subplots(figsize=(12, 8))
-      ax.set_title(title, fontsize=18)
-      ax.set_ylabel('beta', fontsize=14)
-      ax.set_xlabel('sector', fontsize=14)
-      new_df = df
-      new_df['difference'] = df['historical_average_beta'] - df['recent_average_beta']
-      new_df.sort_values(by='difference', ascending=True, inplace=True)
-      new_df[['sector', 'historical_average_beta', 'recent_average_beta']].plot(kind='bar', x='sector', ax=ax)
-      plt.tight_layout()
-      plt.savefig(title)
-
-    def plot_histogram_of_betas(df):
-      fig, ax = plt.subplots(figsize=(12, 8))
-      ax.set_title('Histogram of Betas for each sector', fontsize=18)
-      ax.set_ylabel('frequence', fontsize=14)
-      ax.set_xlabel('beta value', fontsize=14)
-      df[IMPT_BETA_COLUMNS.keys()].hist(ax=ax)
-
-    def get_data_for_a_period(df, start_date, end_date):
-      new_df = df.reset_index()
-      new_df['Date'] = pd.to_datetime(new_df['Date'])
-      mask = (new_df['Date'] > start_date) & (new_df['Date'] <= end_date)
-      return new_df.loc[mask]
 
     def t_test_for_symbol_betas(betas_df, historical_start):
       data = {'symbol': [], 'sector': [], 't_stat': [], 'p_value': [], 'significant?': [
@@ -182,31 +109,12 @@ class SectorBetasAndPlots:
 
       return pd.DataFrame(data)
 
-    def plot_correlation(df, title):
-      fig, ax = plt.subplots(figsize=(12, 8))
-      ax.set_title(title, fontsize=18)
-      plt.xticks(fontsize=12)
-      new_corr_df['recent_cat'] = 'recent'
-      sns.stripplot(ax=ax, x="category", y="correlation", data=df, jitter=0.05)
-      ax.set_ylabel('correlation', fontsize=16)
-      ax.set_xlabel('time period', fontsize=16)
-      plt.tight_layout()
-      plt.savefig(title)
-      plt.tight_layout()
-      plt.savefig(title)
+    def create_csv_for_data_frame(df, title):
+      return df.to_csv(f'{title}')
 
-   def plot_correlation_matrix(df, title):
-      fig, ax = plt.subplots(figsize=(10, 8))
-      df[IMPT_COLUMNS.keys()]
-      corrMatrix = df.corr()
-      sns.heatmap(corrMatrix, annot=True, ax=ax, vmin=-1, vmax=1, linewidths=1,
-                       xticklabels=IMPT_COLUMNS.values(), yticklabels=IMPT_COLUMNS.values())
-      b, t = plt.ylim()
-      b += 0.5
-      t -= 0.5
-      plt.ylim(b, t)
-      ax.set_title(title, fontsize=16)
-      plt.tight_layout()
-      plt.savefig(title)
-      plt.show()
+    def get_data_for_a_period(df, start_date, end_date):
+      new_df=df.reset_index()
+      new_df['Date']=pd.to_datetime(new_df['Date'])
+      mask=(new_df['Date'] > start_date) & (new_df['Date'] <= end_date)
+      return new_df.loc[mask]
 
